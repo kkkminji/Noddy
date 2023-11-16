@@ -31,3 +31,7 @@ export interface ContextType {
 export interface SendMessage {
   nickname?: string;
 }
+
+export interface DestroyRoomId {
+  roomId: string;
+}

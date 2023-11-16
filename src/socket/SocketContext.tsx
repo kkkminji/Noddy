@@ -1,4 +1,12 @@
-import { FC, PropsWithChildren, createContext, useRef, useState } from 'react';
+import {
+  FC,
+  PropsWithChildren,
+  createContext,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import socketio from 'socket.io-client';
 import {
   User,
@@ -7,6 +15,7 @@ import {
   getRooms,
   getRoom,
   RoomsList,
+  DestroyRoomId,
 } from './socket.type';
 import { SEND_MESSAGR, RECEIVE_MESSAGE } from '../common/common.enum';
 
@@ -33,11 +42,9 @@ export const SocketProvider: FC<PropsWithChildren<ResponsiveProviderPros>> = ({
   const users = useRef<User[]>([]);
 
   const [joinConnect, setJoinConnect] = useState<boolean>(false);
-  const [rooms, setRooms] = useState<RoomsList[]>([]);
-
-  socket.on('connect', () => {
-    console.log('connect');
-    GetRooms();
+  const [rooms, setRooms] = useState(() => {
+    const initialRooms: RoomsList[] = [];
+    return initialRooms;
   });
 
   socket.on(RECEIVE_MESSAGE.JOINED, (msg: User[]) => {
@@ -50,14 +57,31 @@ export const SocketProvider: FC<PropsWithChildren<ResponsiveProviderPros>> = ({
     setRooms(msg.rooms);
   });
 
-  socket.on(RECEIVE_MESSAGE.ROOM_CREATED, (msg: getRoom) => {
-    const newRoom: RoomsList[] = [...rooms, msg.room];
-    setRooms(newRoom);
-  });
+  const socketCreatedHandler = useCallback((msg: getRoom) => {
+    setRooms((prevRooms) => [...prevRooms, msg.room]);
+  }, []);
 
-  socket.on(RECEIVE_MESSAGE.ROOM_DESTROYED, (msg) => {
-    console.log('destroyed', msg);
-  });
+  useEffect(() => {
+    socket.on(RECEIVE_MESSAGE.ROOM_CREATED, socketCreatedHandler);
+    return () => {
+      socket.off(RECEIVE_MESSAGE.ROOM_CREATED, socketCreatedHandler);
+    };
+  }, [socketCreatedHandler]);
+
+  const socketDestroyedHandler = useCallback((msg: DestroyRoomId) => {
+    console.log('destroyed', msg, rooms);
+    setRooms((prevRooms) => {
+      const currentRooms = prevRooms.filter((room) => room.id !== msg.roomId);
+      return currentRooms;
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on(RECEIVE_MESSAGE.ROOM_DESTROYED, socketDestroyedHandler);
+    return () => {
+      socket.off(RECEIVE_MESSAGE.ROOM_DESTROYED, socketDestroyedHandler);
+    };
+  }, [socketDestroyedHandler]);
 
   const Join = (nickname: string) => {
     emit(SEND_MESSAGR.JOIN, { nickname });
@@ -67,7 +91,6 @@ export const SocketProvider: FC<PropsWithChildren<ResponsiveProviderPros>> = ({
     emit(SEND_MESSAGR.GET_ROOMS, {});
   };
 
-  // SEND
   const emit = (event: SEND_MESSAGR, msg: SendMessage) => {
     socket.emit(event, msg);
   };

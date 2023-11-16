@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { GridRoom } from './Styled';
 import { SocketContext } from '../socket/SocketContext';
 
@@ -13,7 +13,6 @@ export const RoomList = () => {
 
   return (
     <GridRoom>
-      qwewqeqwe
       <ul>
         {rooms.map((room) => (
           <li key={room.id}>{room.name}</li>
