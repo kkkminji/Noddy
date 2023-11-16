@@ -13,12 +13,12 @@ import { Icon } from '../../components/icon/Sreach';
 export const Login = () => {
   const naviggate = useNavigate();
   const value = useContext(SocketContext);
-  // const { Join, joinConnect } = value;
+  const { Join, joinConnect } = value;
   const nickName = useRef<string>('');
 
-  // useEffect(() => {
-  //   if (joinConnect) naviggate('/home');
-  // }, [joinConnect]);
+  useEffect(() => {
+    if (joinConnect) naviggate('/home');
+  }, [joinConnect]);
 
   const ChangeNickName = (e: ChangeEvent<HTMLInputElement>) => {
     nickName.current = e.target.value;
@@ -33,7 +33,7 @@ export const Login = () => {
   };
   const HandlerJoin = () => {
     if (!nickName.current) alert('닉네임 입력하삼');
-    // Join(nickName.current);
+    Join(nickName.current);
   };
 
   return (

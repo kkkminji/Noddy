@@ -1,12 +1,4 @@
-import {
-  FC,
-  PropsWithChildren,
-  createContext,
-  useRef,
-  useState,
-  useEffect,
-  useCallback,
-} from 'react';
+import { FC, PropsWithChildren, createContext, useRef, useState } from 'react';
 import socketio from 'socket.io-client';
 import {
   User,
@@ -23,7 +15,7 @@ const socket = socketio(ENDPOINT);
 
 const defaultContextValue: ContextType = {
   users: [],
-  // joinConnect: false,
+  joinConnect: false,
   rooms: [],
   Join: () => {},
   GetRooms: () => {},
@@ -40,55 +32,32 @@ export const SocketProvider: FC<PropsWithChildren<ResponsiveProviderPros>> = ({
 
   const users = useRef<User[]>([]);
 
-  // const rooms = useRef<RoomsList[]>([]);
-
-  // const [joinConnect, setJoinConnect] = useState<boolean>(false);
+  const [joinConnect, setJoinConnect] = useState<boolean>(false);
   const [rooms, setRooms] = useState<RoomsList[]>([]);
 
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('connect');
-      GetRooms();
-    });
+  socket.on('connect', () => {
+    console.log('connect');
+    GetRooms();
+  });
 
-    socket.on(RECEIVE_MESSAGE.JOINED, (msg: User[]) => {
-      // setJoinConnect(true);
-      users.current = msg;
-    });
+  socket.on(RECEIVE_MESSAGE.JOINED, (msg: User[]) => {
+    setJoinConnect(true);
+    users.current = msg;
+  });
 
-    socket.on(RECEIVE_MESSAGE.ROOMS, (msg: getRooms) => {
-      console.log('room msg', msg.rooms);
-      setRooms(msg.rooms);
-      // rooms.current = msg.rooms;
+  socket.on(RECEIVE_MESSAGE.ROOMS, (msg: getRooms) => {
+    console.log('room msg', msg.rooms);
+    setRooms(msg.rooms);
+  });
 
-      // console.log(rooms.current);
-    });
-
-    socket.on(RECEIVE_MESSAGE.ROOM_CREATED, () => text);
-
-    socket.on(RECEIVE_MESSAGE.ROOM_DESTROYED, (msg) => {
-      console.log('destroyed', msg);
-    });
-  }, []);
-
-  const text = useCallback(
-    (msg: any) => {
-      const newRoom: RoomsList[] = [...rooms, msg.rooms];
-
-      console.log('newRoom', newRoom);
-
-      setRooms(newRoom);
-    },
-    [rooms]
-  );
-
-  const test = (msg: any) => {
-    const newRoom: RoomsList[] = [...rooms, msg];
-
-    console.log('newRoom', newRoom);
-
+  socket.on(RECEIVE_MESSAGE.ROOM_CREATED, (msg: getRoom) => {
+    const newRoom: RoomsList[] = [...rooms, msg.room];
     setRooms(newRoom);
-  };
+  });
+
+  socket.on(RECEIVE_MESSAGE.ROOM_DESTROYED, (msg) => {
+    console.log('destroyed', msg);
+  });
 
   const Join = (nickname: string) => {
     emit(SEND_MESSAGR.JOIN, { nickname });
@@ -105,8 +74,7 @@ export const SocketProvider: FC<PropsWithChildren<ResponsiveProviderPros>> = ({
 
   const value = {
     users: users.current,
-    // joinConnect,
-    // rooms: rooms.current,
+    joinConnect,
     rooms,
     Join,
     GetRooms,
@@ -118,7 +86,3 @@ export const SocketProvider: FC<PropsWithChildren<ResponsiveProviderPros>> = ({
     <SocketContext.Provider value={value}> {children}</SocketContext.Provider>
   );
 };
-
-// const { test: Consumer } = SocketContext;
-
-export const Consumer = SocketContext.Consumer;

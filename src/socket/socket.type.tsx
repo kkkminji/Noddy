@@ -22,7 +22,7 @@ export interface RoomsList {
 
 export interface ContextType {
   users: User[];
-  // joinConnect: boolean;
+  joinConnect: boolean;
   rooms: RoomsList[];
   Join: (event: string) => void;
   GetRooms: () => void;
