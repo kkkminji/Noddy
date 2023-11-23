@@ -26,3 +26,8 @@ export const Body = styled.div`
   box-shadow: 0 2px 3px 0 rgba(34, 36, 38, 0.15);
   transform: translateX(-50%) translateY(-50%);
 `;
+
+export const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;

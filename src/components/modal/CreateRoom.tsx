@@ -1,11 +1,11 @@
 import { ChangeEvent, useContext, useState } from 'react';
-import { ModalGrid, Body } from './Styled';
+import { ModalGrid, Body, Header } from './Styled';
 import { SocketContext } from '../../socket/SocketContext';
 import { TYPE } from '../../common/common.enum';
 import { CreateRoomType } from '../../socket/socket.type';
 import { PropsType } from '../../common/common.type';
 
-export const CreateRoom = (openCreateRoom: PropsType) => {
+export const CreateRoom = ({ openCreateRoom, changeState }: PropsType) => {
   const [name, setName] = useState<string>('');
   const [checked, setChecked] = useState<boolean>(false);
   const [passwd, setPasswd] = useState<string>('');
@@ -41,13 +41,17 @@ export const CreateRoom = (openCreateRoom: PropsType) => {
       };
     }
     CreateRoom(param);
-    // 방생성하면 비디오방으로 이동, 모달 닫기
-    // openCreateRoom
+    // 방생성하면 비디오방으로 이동,
+    openCreateRoom();
+    changeState(true);
   };
   return (
     <ModalGrid>
       <Body>
-        <div>방만들기</div>
+        <Header>
+          <div>방만들기</div>
+          <button onClick={() => openCreateRoom()}>x</button>
+        </Header>
         <div>
           <label htmlFor='name'>이름</label>
           <input id='name' placeholder='이름' onChange={changeName}></input>

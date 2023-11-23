@@ -7,6 +7,7 @@ export enum SEND_MESSAGR {
   LEAVE_ROOM = 'leaveRoom',
   DESTROY_ROOM = 'destroyRoom',
   KICK_USER = 'kickUser',
+  GET_USERS = 'getUsers',
 }
 
 export enum RECEIVE_MESSAGE {
@@ -22,9 +23,11 @@ export enum RECEIVE_MESSAGE {
   LEAVED = 'leaved',
   DESTROYED = 'destroyed',
   KICKED = 'kicked',
+  USERS = 'users',
 }
 
 export enum TYPE {
+  LOBBY = 'lobby',
   NORMAL = 'normal',
   SECRET = 'secret',
 }

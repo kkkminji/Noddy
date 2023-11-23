@@ -7,7 +7,7 @@ export const Container = styled.div`
 `;
 
 export const Header = styled.header`
-  background-color: #000;
+  /* background-color: #000; */
   box-shadow: 1px 1px 3px 1px #3e3e3e;
   display: flex;
   justify-content: space-between;
