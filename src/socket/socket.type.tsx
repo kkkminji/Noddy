@@ -26,12 +26,24 @@ export interface ContextType {
   rooms: RoomsList[];
   Join: (event: string) => void;
   GetRooms: () => void;
+  CreateRoom: (event: CreateRoomType) => void;
 }
 
 export interface SendMessage {
   nickname?: string;
+  name?: string;
+  type?: TYPE;
+  passwd?: string;
+  limitCnt?: number;
 }
 
 export interface DestroyRoomId {
   roomId: string;
+}
+
+export interface CreateRoomType {
+  name: string;
+  type?: TYPE;
+  passwd?: string;
+  limitCnt?: number;
 }

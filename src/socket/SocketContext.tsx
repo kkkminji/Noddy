@@ -16,6 +16,7 @@ import {
   getRoom,
   RoomsList,
   DestroyRoomId,
+  CreateRoomType,
 } from './socket.type';
 import { SEND_MESSAGR, RECEIVE_MESSAGE } from '../common/common.enum';
 
@@ -28,6 +29,7 @@ const defaultContextValue: ContextType = {
   rooms: [],
   Join: () => {},
   GetRooms: () => {},
+  CreateRoom: () => {},
 };
 
 export const SocketContext = createContext<ContextType>(defaultContextValue);
@@ -58,6 +60,7 @@ export const SocketProvider: FC<PropsWithChildren<ResponsiveProviderPros>> = ({
   });
 
   const socketCreatedHandler = useCallback((msg: getRoom) => {
+    console.log('created', msg);
     setRooms((prevRooms) => [...prevRooms, msg.room]);
   }, []);
 
@@ -91,6 +94,10 @@ export const SocketProvider: FC<PropsWithChildren<ResponsiveProviderPros>> = ({
     emit(SEND_MESSAGR.GET_ROOMS, {});
   };
 
+  const CreateRoom = (msg: CreateRoomType) => {
+    emit(SEND_MESSAGR.CREATE_ROOM, msg);
+  };
+
   const emit = (event: SEND_MESSAGR, msg: SendMessage) => {
     socket.emit(event, msg);
   };
@@ -101,6 +108,7 @@ export const SocketProvider: FC<PropsWithChildren<ResponsiveProviderPros>> = ({
     rooms,
     Join,
     GetRooms,
+    CreateRoom,
   };
 
   console.log('value', value);

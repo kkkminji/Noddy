@@ -1,6 +1,6 @@
 export const Icon = () => {
   const svgStyle = {
-    fill: 'rgb(217 40 137)',
+    fill: 'rgba(50, 400, 200, 0.7)',
     margin: '10px 0px 10px 0px',
   };
   return (
